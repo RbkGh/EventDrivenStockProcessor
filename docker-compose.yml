@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  stock-processor:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    container_name: stock-processor
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/stock-db
+      - SPRING_DATASOURCE_USERNAME=stock-user
+      - SPRING_DATASOURCE_PASSWORD=stock-pass
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    environment:
+      - POSTGRES_USER=stock-user
+      - POSTGRES_PASSWORD=stock-pass
