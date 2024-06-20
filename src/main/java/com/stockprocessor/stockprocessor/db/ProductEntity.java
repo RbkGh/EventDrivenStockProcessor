@@ -3,8 +3,6 @@ package com.stockprocessor.stockprocessor.db;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
-
 
 @Data
 @Entity

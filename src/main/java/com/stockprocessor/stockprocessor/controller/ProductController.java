@@ -14,8 +14,9 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-@RestController("api/v1/products")
+@RestController
 @AllArgsConstructor
+@RequestMapping("api/v1/products")
 public class ProductController {
 
     private ProductService productService;
@@ -32,7 +33,7 @@ public class ProductController {
         return ResponseEntity.ok(productDTOs);
     }
 
-    @GetMapping("/{productID}")
+    @GetMapping("{productID}")
     public ResponseEntity<?> getProduct(@PathVariable long productID) {
         Optional<ProductEntity> productEntity = productService.getProduct(productID);
 
@@ -47,7 +48,7 @@ public class ProductController {
         return ResponseEntity.created(URI.create("/" + productEntity.getId())).build();
     }
 
-    @PutMapping("/{productID}")
+    @PutMapping("{productID}")
     public ResponseEntity<?> updateProduct(@PathVariable long productID, @RequestBody ProductDTO productDTO) throws NotFoundHttpException {
         try {
             productService.updateProduct(productID, productMapper.toProductEntity(productDTO));
@@ -58,7 +59,7 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{productID}")
+    @DeleteMapping("{productID}")
     public ResponseEntity<?> deleteProduct(@PathVariable long productID) throws NotFoundHttpException {
         try {
             productService.deleteProduct(productID);
