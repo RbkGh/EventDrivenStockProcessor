@@ -24,10 +24,11 @@ public class ProductService {
         return productRepository.save(productEntity);
     }
 
-    public ProductEntity updateProduct(ProductEntity productEntity) throws EntityNotFoundException {
-        if (!productRepository.existsById(productEntity.getId())) {
+    public ProductEntity updateProduct(Long productID,ProductEntity productEntity) throws EntityNotFoundException {
+        if (!productRepository.existsById(productID)) {
             throw new EntityNotFoundException("product not found");
         }
+        productEntity.setId(productID);
         return productRepository.save(productEntity);
     }
 
