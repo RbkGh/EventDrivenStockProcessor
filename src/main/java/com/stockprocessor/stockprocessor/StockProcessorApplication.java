@@ -10,4 +10,5 @@ public class StockProcessorApplication {
 		SpringApplication.run(StockProcessorApplication.class, args);
 	}
 
+
 }
