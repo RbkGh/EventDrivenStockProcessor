@@ -7,8 +7,10 @@ import com.stockprocessor.stockprocessor.mapper.ProductMapper;
 import com.stockprocessor.stockprocessor.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -43,15 +45,19 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<?> createProduct(@RequestBody ProductDTO productDTO) {
-        ProductEntity productEntity = productService.createProduct(productMapper.toProductEntity(productDTO));
+        if (productService.doesProductShortCodeExist(productDTO.getProductShortCode())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("productShortCode exists");
+        } else {
+            ProductEntity productEntity = productService.createProduct(productMapper.toProductEntity(productDTO));
 
-        return ResponseEntity.created(URI.create("/" + productEntity.getId())).build();
+            return ResponseEntity.created(URI.create(ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString() + "/" + productEntity.getId())).build();
+        }
     }
 
     @PutMapping("{productID}")
-    public ResponseEntity<?> updateProduct(@PathVariable long productID, @RequestBody ProductDTO productDTO) throws NotFoundHttpException {
+    public ResponseEntity<?> updateProduct(@PathVariable String productID, @RequestBody ProductDTO productDTO) throws NotFoundHttpException {
         try {
-            productService.updateProduct(productID, productMapper.toProductEntity(productDTO));
+            productService.updateProduct(Long.valueOf(productID), productMapper.toProductEntity(productDTO));
         } catch (EntityNotFoundException exp) {
             throw new NotFoundHttpException();
         }

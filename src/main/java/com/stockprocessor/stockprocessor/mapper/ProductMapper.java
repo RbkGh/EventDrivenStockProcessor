@@ -5,15 +5,13 @@ import com.stockprocessor.stockprocessor.db.ProductQtyEntity;
 import com.stockprocessor.stockprocessor.dto.ProductDTO;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 @Component
 public class ProductMapper {
 
     public ProductDTO toProductDTO(ProductEntity productEntity) {
         ProductDTO productDTO = new ProductDTO();
 
-        productDTO.setId(productEntity.getId());
+        productDTO.setId(String.valueOf(productEntity.getId()));
         productDTO.setProductName(productEntity.getProductName());
         productDTO.setProductImageURL(productEntity.getProductImageURL());
         productDTO.setProductShortCode(productEntity.getProductShortCode());
@@ -26,7 +24,7 @@ public class ProductMapper {
         ProductEntity productEntity = new ProductEntity();
 
         if(productDTO.getId()!=null){
-            productEntity.setId(productDTO.getId());
+            productEntity.setId(Long.valueOf(productDTO.getId()));
         }
 
         productEntity.setProductName(productDTO.getProductName());
@@ -35,6 +33,7 @@ public class ProductMapper {
 
         ProductQtyEntity productQty = new ProductQtyEntity();
         productQty.setTotalQty(productDTO.getProductQty());
+        productQty.setProductEntity(productEntity);
 
         productEntity.setProductQty(productQty);
 

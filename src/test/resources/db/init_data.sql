@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS public.product
     product_name character varying(255) COLLATE pg_catalog."default",
     product_short_code character varying(255) COLLATE pg_catalog."default",
     product_qty_id bigint,
+    deleted integer,
     CONSTRAINT product_pkey PRIMARY KEY (id),
     CONSTRAINT ukevhjmpxt8allgqp6eo7c0vgis UNIQUE (product_short_code),
     CONSTRAINT uki6vjsfskvj61cn5bsksgn3tsl UNIQUE (product_qty_id),
