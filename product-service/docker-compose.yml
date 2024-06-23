@@ -1,0 +1,34 @@
+version: '2'
+
+services:
+  app-stock-processor:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    container_name: app-stock-processor
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://db:5432/stock-db'
+      SPRING_DATASOURCE_USERNAME: 'stock-user'
+      SPRING_DATASOURCE_PASSWORD: 'stock-pass'
+      SPRING_JPA_HIBERNATE_DDL_AUTO: 'update'
+      SPRING_PROFILES_ACTIVE: 'production'
+      PRODUCT_KAFKA_TOPIC_CREATED: 'products.created'
+      PRODUCT_KAFKA_TOPIC_UPDATED: 'products.updated'
+      PRODUCT_KAFKA_TOPIC_READ: 'products.read'
+      PRODUCT_KAFKA_TOPIC_DELETED: 'products.deleted'
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: 'broker:29092'
+    ports:
+      - "8080:8080"
+
+
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    environment:
+      - POSTGRES_USER=stock-user
+      - POSTGRES_PASSWORD=stock-pass
+      - POSTGRES_DB=stock-db
+    ports:
+      - "5432:5432"
