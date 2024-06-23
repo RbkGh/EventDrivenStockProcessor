@@ -11,9 +11,26 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaConfig {
 
     @Bean
-    public NewTopic booksPublishedTopic(final KafkaConfigProps kafkaConfigProps) {
+    public NewTopic productCreatedTopic(final KafkaConfigProps kafkaConfigProps) {
         return TopicBuilder.name(kafkaConfigProps.getCreatedTopic())
         .partitions(10)
         .replicas(1)
-        .build();    }
+        .build();
+    }
+
+    @Bean
+    public NewTopic productUpdatedTopic(final KafkaConfigProps kafkaConfigProps) {
+        return TopicBuilder.name(kafkaConfigProps.getUpdatedTopic())
+                .partitions(10)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic productDeletedTopic(final KafkaConfigProps kafkaConfigProps) {
+        return TopicBuilder.name(kafkaConfigProps.getDeletedTopic())
+                .partitions(10)
+                .replicas(1)
+                .build();
+    }
 }

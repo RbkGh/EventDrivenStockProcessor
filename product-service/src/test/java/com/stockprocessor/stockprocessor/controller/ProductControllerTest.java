@@ -15,6 +15,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -29,6 +31,8 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils;
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ProductControllerTest {
     @LocalServerPort
@@ -55,6 +59,8 @@ class ProductControllerTest {
             .withPassword("stock-pass")
             .withInitScript(INIT_SQL)
             .withReuse(true);
+
+
 
     @BeforeAll
     public static void beforeAll() {
