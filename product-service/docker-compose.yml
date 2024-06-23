@@ -16,7 +16,6 @@ services:
       SPRING_PROFILES_ACTIVE: 'production'
       PRODUCT_KAFKA_TOPIC_CREATED: 'products.created'
       PRODUCT_KAFKA_TOPIC_UPDATED: 'products.updated'
-      PRODUCT_KAFKA_TOPIC_READ: 'products.read'
       PRODUCT_KAFKA_TOPIC_DELETED: 'products.deleted'
       SPRING_KAFKA_BOOTSTRAP_SERVERS: 'broker:29092'
     ports:
