@@ -1,28 +1,25 @@
-version: '2'
-
+---
+version: '3'
 services:
-  app-stock-processor:
-    image: 'docker-spring-boot-postgres:latest'
-    build:
-      context: .
-    container_name: app-stock-processor
+  zookeeper-product:
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: zookeeper-product
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker-product:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: broker-product
+    ports:
+      - "9092:9092"
     depends_on:
-      - db
+      - zookeeper-product
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/stock-db
-      - SPRING_DATASOURCE_USERNAME=stock-user
-      - SPRING_DATASOURCE_PASSWORD=stock-pass
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-    ports:
-      - "8080:8080"
-
-
-  db:
-    image: 'postgres:13.1-alpine'
-    container_name: db
-    environment:
-      - POSTGRES_USER=stock-user
-      - POSTGRES_PASSWORD=stock-pass
-      - POSTGRES_DB=stock-db
-    ports:
-      - "5432:5432"
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper-product:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker-product:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1

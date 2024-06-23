@@ -42,14 +42,14 @@ public class ProductService {
         return productRepository.save(productEntityInDB);
     }
 
-    public void deleteProduct(long productID) throws EntityNotFoundException {
+    public ProductEntity deleteProduct(long productID) throws EntityNotFoundException {
         if (!productRepository.existsById(productID))
             throw new EntityNotFoundException("product not found");
 
         ProductEntity productEntity = productRepository.findById(productID).get();
         productEntity.setDeleted();
 
-        productRepository.save(productEntity);
+        return productRepository.save(productEntity);
     }
 
     public boolean doesProductShortCodeExist(String productShortCode) {

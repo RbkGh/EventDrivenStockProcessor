@@ -2,9 +2,13 @@ package com.stockprocessor.stockprocessor.controller;
 
 import com.stockprocessor.stockprocessor.db.ProductEntity;
 import com.stockprocessor.stockprocessor.dto.ProductDTO;
+import com.stockprocessor.stockprocessor.dto.ProductUpdatedPublisherDTO;
 import com.stockprocessor.stockprocessor.exceptions.NotFoundHttpException;
 import com.stockprocessor.stockprocessor.mapper.ProductMapper;
+import com.stockprocessor.stockprocessor.service.ProductCreatedPublisherService;
+import com.stockprocessor.stockprocessor.service.ProductDeletedPublisher;
 import com.stockprocessor.stockprocessor.service.ProductService;
+import com.stockprocessor.stockprocessor.service.ProductUpdatedPublisher;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +27,9 @@ public class ProductController {
 
     private ProductService productService;
     private ProductMapper productMapper;
+    private ProductCreatedPublisherService productPublisherService;
+    private ProductUpdatedPublisher productUpdatedPublisher;
+    private ProductDeletedPublisher productDeletedPublisher;
 
     @GetMapping
     public ResponseEntity<?> getAllProducts() {
@@ -50,6 +57,8 @@ public class ProductController {
         } else {
             ProductEntity productEntity = productService.createProduct(productMapper.toProductEntity(productDTO));
 
+            //publish to broker
+            productPublisherService.publish(productMapper.toProductDTO(productEntity));
             return ResponseEntity.created(URI.create(ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString() + "/" + productEntity.getId())).build();
         }
     }
@@ -57,7 +66,13 @@ public class ProductController {
     @PutMapping("{productID}")
     public ResponseEntity<?> updateProduct(@PathVariable String productID, @RequestBody ProductDTO productDTO) throws NotFoundHttpException {
         try {
-            productService.updateProduct(Long.valueOf(productID), productMapper.toProductEntity(productDTO));
+            ProductDTO productUpdated = productMapper.toProductDTO(productService.updateProduct(Long.valueOf(productID), productMapper.toProductEntity(productDTO)));
+
+
+            //publish to update broker
+            ProductUpdatedPublisherDTO productUpdatedPublisherDTO = ProductUpdatedPublisherDTO.builder().productDTOExisting(productDTO)
+                    .getProductDTOUpdated(productUpdated).build();
+            productUpdatedPublisher.publish(productUpdatedPublisherDTO);
         } catch (EntityNotFoundException exp) {
             throw new NotFoundHttpException();
         }
@@ -68,7 +83,10 @@ public class ProductController {
     @DeleteMapping("{productID}")
     public ResponseEntity<?> deleteProduct(@PathVariable long productID) throws NotFoundHttpException {
         try {
-            productService.deleteProduct(productID);
+            ProductDTO productDTO = productMapper.toProductDTO(productService.deleteProduct(productID));
+
+            //publish to delete topic
+            productDeletedPublisher.publish(productDTO);
         } catch (EntityNotFoundException exp) {
             throw new NotFoundHttpException();
         }
