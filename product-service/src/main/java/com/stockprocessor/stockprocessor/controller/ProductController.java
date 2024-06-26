@@ -57,8 +57,9 @@ public class ProductController {
         } else {
             ProductEntity productEntity = productService.createProduct(productMapper.toProductEntity(productDTO));
 
-            //publish to broker
-            productPublisherService.publish(productMapper.toProductDTO(productEntity));
+            //publish to broker,run in thread to prevent any blocking of http response
+            new Thread(() -> productPublisherService.publish(productMapper.toProductDTO(productEntity))).start();
+
             return ResponseEntity.created(URI.create(ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString() + "/" + productEntity.getId())).build();
         }
     }
@@ -69,10 +70,13 @@ public class ProductController {
             ProductDTO productUpdated = productMapper.toProductDTO(productService.updateProduct(Long.valueOf(productID), productMapper.toProductEntity(productDTO)));
 
 
-            //publish to update broker
-            ProductUpdatedPublisherDTO productUpdatedPublisherDTO = ProductUpdatedPublisherDTO.builder().productDTOExisting(productDTO)
-                    .getProductDTOUpdated(productUpdated).build();
-            productUpdatedPublisher.publish(productUpdatedPublisherDTO);
+            //publish to update broker,run in seperate thread to prevent any blocking of http response
+            new Thread(() -> {
+                ProductUpdatedPublisherDTO productUpdatedPublisherDTO = ProductUpdatedPublisherDTO.builder().productDTOExisting(productDTO)
+                        .getProductDTOUpdated(productUpdated).build();
+                productUpdatedPublisher.publish(productUpdatedPublisherDTO);
+            }).start();
+
         } catch (EntityNotFoundException exp) {
             throw new NotFoundHttpException();
         }
@@ -85,8 +89,11 @@ public class ProductController {
         try {
             ProductDTO productDTO = productMapper.toProductDTO(productService.deleteProduct(productID));
 
-            //publish to delete topic
-            productDeletedPublisher.publish(productDTO);
+            //publish to delete topic,run in seperate thread to prevent any blocking of http response
+            new Thread(() -> {
+                productDeletedPublisher.publish(productDTO);
+            }).start();
+
         } catch (EntityNotFoundException exp) {
             throw new NotFoundHttpException();
         }

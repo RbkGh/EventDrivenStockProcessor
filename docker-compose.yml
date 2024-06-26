@@ -1,12 +1,40 @@
----
 version: '3'
+
 services:
-  zookeeper-product:
-    image: confluentinc/cp-zookeeper:7.3.0
-    container_name: zookeeper-product
+  mongo_db:
+    image: mongo:5.0.2
+    #    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
+    ports:
+      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
+    volumes:
+      - mongo_db:/data/db
+
+
+  postgres_db:
+    image: 'postgres:13.1-alpine'
+    container_name: postgres_db
+    #    depends_on:
+    #      - kafka-ui-2
+    environment:
+      - POSTGRES_USER=stock-user
+      - POSTGRES_PASSWORD=stock-pass
+      - POSTGRES_DB=stock-db
+    ports:
+      - "5432:5432"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    depends_on:
+      - postgres_db
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
 
   broker-product:
     image: confluentinc/cp-kafka:7.3.0
@@ -14,12 +42,73 @@ services:
     ports:
       - "9092:9092"
     depends_on:
-      - zookeeper-product
+      - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper-product:2181'
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker-product:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - broker-product
+    ports:
+      - 8090:8080
+    environment:
+#      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker-product:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+
+
+  app-product-service:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: ./product-service
+    container_name: app-product-service
+    depends_on:
+      - broker-product
+      - postgres_db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_db:5432/stock-db
+      SPRING_DATASOURCE_USERNAME: stock-user
+      SPRING_DATASOURCE_PASSWORD: stock-pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_PROFILES_ACTIVE: production
+      PRODUCT_KAFKA_TOPIC_CREATED: products.created
+      PRODUCT_KAFKA_TOPIC_UPDATED: products.updated
+      PRODUCT_KAFKA_TOPIC_DELETED: products.deleted
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: broker-product:29092
+    ports:
+      - "8080:8080"
+
+  event-update-app:
+    depends_on:
+      - mongo_db
+      - broker-product
+    build:
+      context: ./event-update-listener
+    env_file: .env
+    ports:
+      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
+    environment:
+      SPRING_APPLICATION_JSON: '{
+            "spring.data.mongodb.uri" : "mongodb://$MONGODB_USER:$MONGODB_PASSWORD@mongo_db:$MONGODB_DOCKER_PORT/$MONGODB_DATABASE?authSource=admin"
+          }'
+      SPRING_PROFILES_ACTIVE: 'production'
+      PRODUCT_KAFKA_TOPIC_CREATED: products.created
+      PRODUCT_KAFKA_TOPIC_UPDATED: products.updated
+      PRODUCT_KAFKA_TOPIC_DELETED: products.deleted
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: broker-product:29092
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+  
+
+
+volumes:
+  mongo_db:

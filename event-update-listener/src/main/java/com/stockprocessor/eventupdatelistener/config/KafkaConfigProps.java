@@ -1,4 +1,4 @@
-package com.stockprocessor.stockprocessor.config;
+package com.stockprocessor.eventupdatelistener.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

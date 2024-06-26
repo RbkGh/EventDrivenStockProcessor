@@ -18,19 +18,19 @@ public class KafkaConfig {
         .build();
     }
 
-    @Bean
-    public NewTopic productUpdatedTopic(final KafkaConfigProps kafkaConfigProps) {
-        return TopicBuilder.name(kafkaConfigProps.getUpdatedTopic())
-                .partitions(10)
-                .replicas(1)
-                .build();
-    }
-
-    @Bean
-    public NewTopic productDeletedTopic(final KafkaConfigProps kafkaConfigProps) {
-        return TopicBuilder.name(kafkaConfigProps.getDeletedTopic())
-                .partitions(10)
-                .replicas(1)
-                .build();
-    }
+//    @Bean
+//    public NewTopic productUpdatedTopic(final KafkaConfigProps kafkaConfigProps) {
+//        return TopicBuilder.name(kafkaConfigProps.getUpdatedTopic())
+//                .partitions(10)
+//                .replicas(1)
+//                .build();
+//    }
+//
+//    @Bean
+//    public NewTopic productDeletedTopic(final KafkaConfigProps kafkaConfigProps) {
+//        return TopicBuilder.name(kafkaConfigProps.getDeletedTopic())
+//                .partitions(10)
+//                .replicas(1)
+//                .build();
+//    }
 }

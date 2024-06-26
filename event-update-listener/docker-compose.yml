@@ -25,10 +25,16 @@ services:
       SPRING_APPLICATION_JSON: '{
           "spring.data.mongodb.uri" : "mongodb://$MONGODB_USER:$MONGODB_PASSWORD@mongo_db:$MONGODB_DOCKER_PORT/$MONGODB_DATABASE?authSource=admin"
         }'
+      SPRING_PROFILES_ACTIVE: 'production'
+      PRODUCT_KAFKA_TOPIC_CREATED: 'products.created'
+      PRODUCT_KAFKA_TOPIC_UPDATED: 'products.updated'
+      PRODUCT_KAFKA_TOPIC_DELETED: 'products.deleted'
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: 'kafka:9092'
     volumes:
       - .m2:/root/.m2
     stdin_open: true
     tty: true
+
 
 volumes:
   mongo_db:

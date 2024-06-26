@@ -11,8 +11,8 @@
     <groupId>com.stockprocessor</groupId>
     <artifactId>stockprocessor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>stockprocessor</name>
-    <description>Stock Processing</description>
+    <name>product-service</name>
+    <description>Product Processing</description>
     <url/>
     <licenses>
         <license/>
@@ -107,7 +107,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
+        <finalName>${project.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -1,8 +1,12 @@
-# FROM maven:3.8.2-jdk-8 # for Java 8
-FROM maven:3.8.5-openjdk-17
+FROM maven:3.8-openjdk-17 as builder
 
-WORKDIR .
-COPY . .
-RUN mvn clean install
+COPY src /usr/app/src
+COPY pom.xml /usr/app
 
-CMD mvn spring-boot:run
+RUN mvn -f /usr/app/pom.xml clean package -DskipTests=true
+
+FROM openjdk:17-alpine
+
+COPY --from=builder /usr/app/target/*.jar /usr/app/app.jar
+
+ENTRYPOINT ["java", "-jar", "/usr/app/app.jar"]
