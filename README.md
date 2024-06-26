@@ -17,6 +17,8 @@ OpenJDK 64-Bit Server VM Homebrew (build 17.0.9+0, mixed mode, sharing)
 ```textmate
 There are two main modules 
 i.  product-service
+- when a product is created, the server responds with 201 and adds the location of the resource in the "Location" header of the response
+- if product exists, it returns conflicted httpstatus
 ii. event-update-listener
 
 - product-service starts a web service with exposed api's for product manipulation,saves to postgres.
@@ -44,9 +46,12 @@ docker-compose up
 
 ![](https://github.com/RbkGh/EventDrivenStockProcessor/blob/main/photos/img_docker.png)
 
-> # [[/product-service-http-requests.postman_collection.json]](./product-service-http-requests.postman_collection.json) contains all CRUD http requests to use in PostMan
-> # Swagger URL : [![http://localhost:8080/swagger-ui/index.html](https://img.shields.io/badge/swagger_url-000?style=for-the-badge&logo=ko-fi&logoColor=white)](http://localhost:8080/swagger-ui/index.html)
-> # Kafka-UI to view kafka updates as changes happen in real-time http://localhost:8090/
+> [[/product-service-http-requests.postman_collection.json]](./product-service-http-requests.postman_collection.json) contains all CRUD http requests to use in PostMan
+
+![](https://github.com/RbkGh/EventDrivenStockProcessor/blob/main/photos/test_cov.png)
+
+> Swagger URL : [![http://localhost:8080/swagger-ui/index.html](https://img.shields.io/badge/swagger_url-000?style=for-the-badge&logo=ko-fi&logoColor=white)](http://localhost:8080/swagger-ui/index.html)
+> Kafka-UI to view kafka updates as changes happen in real-time http://localhost:8090/
 
 > CI/CD : Jenkinsfile is placed in product-service to deploy to heroku
 
