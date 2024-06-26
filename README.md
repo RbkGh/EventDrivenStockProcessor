@@ -32,7 +32,9 @@ when a delete http request comes in, product deleted is published to "product.de
 ```
 
 ## Run all services: 
-> First off,rename ".example.env" file to ".env" [this loads the values into docker]
+1.
+
+> rename ".example.env" file to ".env" [this loads the values into docker]
 
 2.
 ```shell
