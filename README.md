@@ -48,7 +48,7 @@ docker-compose up
 
 > [[/product-service-http-requests.postman_collection.json]](./product-service-http-requests.postman_collection.json) contains all CRUD http requests to use in PostMan
 
-![](https://github.com/RbkGh/EventDrivenStockProcessor/blob/main/photos/test_cov.png)
+![](https://github.com/RbkGh/EventDrivenStockProcessor/blob/main/photos/postman.png)
 
 > Swagger URL : [![http://localhost:8080/swagger-ui/index.html](https://img.shields.io/badge/swagger_url-000?style=for-the-badge&logo=ko-fi&logoColor=white)](http://localhost:8080/swagger-ui/index.html)
 > Kafka-UI to view kafka updates as changes happen in real-time http://localhost:8090/
