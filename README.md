@@ -42,6 +42,7 @@ docker-compose build
 ```shell
 docker-compose up
 ````
+
 >>> this above starts kafka and zookeper, starts two services(product-service and event-update-listener) and starts two databases, mongo_db and postgres_db
 
 ![](https://github.com/RbkGh/EventDrivenStockProcessor/blob/main/photos/img_docker.png)
@@ -51,6 +52,7 @@ docker-compose up
 ![](https://github.com/RbkGh/EventDrivenStockProcessor/blob/main/photos/postman.png)
 
 > Swagger URL : [![http://localhost:8080/swagger-ui/index.html](https://img.shields.io/badge/swagger_url-000?style=for-the-badge&logo=ko-fi&logoColor=white)](http://localhost:8080/swagger-ui/index.html)
+
 > Kafka-UI to view kafka updates as changes happen in real-time http://localhost:8090/
 
 > CI/CD : Jenkinsfile is placed in product-service to deploy to heroku
