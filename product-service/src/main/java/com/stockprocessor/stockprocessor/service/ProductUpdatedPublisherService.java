@@ -29,9 +29,9 @@ public class ProductUpdatedPublisherService implements ProductUpdatedPublisher {
             //send to update topic
             kafkaTemplate.send(kafkaConfigProps.getUpdatedTopic(), payload);
 
-            log.info("$$$$$$$$$$$$$$$$$$ $$$$$$$$$$ product updated and published to kafka topic: {}, payload: {}",kafkaConfigProps.getUpdatedTopic(),payload);
+            log.info("$$$$$$$$$$$$$$$$$$ $$$$$$$$$$ product updated and published to kafka topic: {}, payload: {}", kafkaConfigProps.getUpdatedTopic(), payload);
         } catch (final JsonProcessingException ex) {
-            log.info("**************************** ************************ unable to publish product : {}",productUpdatedPublisherDTO);
+            log.info("**************************** ************************ unable to publish product : {}", productUpdatedPublisherDTO);
         }
     }
 }

@@ -3,7 +3,6 @@ package com.stockprocessor.stockprocessor.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stockprocessor.stockprocessor.config.KafkaConfigProps;
-import com.stockprocessor.stockprocessor.db.ProductEntity;
 import com.stockprocessor.stockprocessor.dto.ProductDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -34,9 +33,9 @@ public class ProductCreatedPublisherService implements ProductCreatedPublisher {
         try {
             final String payload = objectMapper.writeValueAsString(productDTO);
             kafkaTemplate.send(kafkaConfigProps.getCreatedTopic(), payload);
-            log.info("$$$$$$$$$$$$$$$$$$ $$$$$$$$$$ product created and published to kafka topic: {}, payload: {}",kafkaConfigProps.getCreatedTopic(),payload);
+            log.info("$$$$$$$$$$$$$$$$$$ $$$$$$$$$$ product created and published to kafka topic: {}, payload: {}", kafkaConfigProps.getCreatedTopic(), payload);
         } catch (final JsonProcessingException ex) {
-            System.out.println("**************************** ************************ unable to publish product : "+productDTO.getProductName());
+            System.out.println("**************************** ************************ unable to publish product : " + productDTO.getProductName());
         }
     }
 }

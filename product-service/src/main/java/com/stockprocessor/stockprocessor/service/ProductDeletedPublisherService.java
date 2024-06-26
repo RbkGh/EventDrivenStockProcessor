@@ -27,9 +27,9 @@ public class ProductDeletedPublisherService implements ProductDeletedPublisher {
             //send to deleted topic
             kafkaTemplate.send(kafkaConfigProps.getDeletedTopic(), payload);
 
-            log.info("$$$$$$$$$$$$$$$$$$ $$$$$$$$$$ product deleted and published to kafka topic: {}, payload: {}",kafkaConfigProps.getDeletedTopic(),payload);
+            log.info("$$$$$$$$$$$$$$$$$$ $$$$$$$$$$ product deleted and published to kafka topic: {}, payload: {}", kafkaConfigProps.getDeletedTopic(), payload);
         } catch (final JsonProcessingException ex) {
-            log.info("**************************** ************************ unable to publish deleted product : {}",productDTO);
+            log.info("**************************** ************************ unable to publish deleted product : {}", productDTO);
         }
     }
 }
